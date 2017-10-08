@@ -29,5 +29,16 @@ def karger(graph):
 
 
 if __name__ == "__main__":
-    graph = nx.tutte_graph()
-    print(krager(graph))
+
+    """
+        Graph ideas:
+        - Hypercube graph
+        - Zachary's Karate Club
+        - Davis Southern Women
+    """
+    graph = nx.karate_club_graph()
+    nx.draw_graphviz(graph)
+
+    plt.show()
+    print(len(nx.minimum_edge_cut(graph)))
+    print(karger(graph))
