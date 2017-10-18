@@ -25,6 +25,21 @@ def karger(graph):
 
     return len(graph.edges)
 
+def generate_connected_K(nb):
+    """
+        2 connected complete subgraph (nb-connected) joined by nb-2 edges (this
+        will be the only minimum cut)
+    """
+
+    graph = nx.Graph()
+    graph = nx.disjoint_union(graph,nx.complete_graph(nb))
+    graph = nx.disjoint_union(graph,nx.complete_graph(nb))
+
+    for i in range(nb-2):
+        graph.add_edge(i, nb+i)
+    return graph
+
+
 def generate_K100(nb):
     """
         Generates 'nb' K_100 subgraphs and puts an edge between those subgraphs.
@@ -47,11 +62,10 @@ if __name__ == "__main__":
     """
     graph = nx.karate_club_graph()
 
-    graph_union = generate_K100(4)
-
+    #graph_union = generate_K100(4)
+    graph_union = generate_connected_K(10)
     nx.draw(graph_union)
     plt.show()
-
 
     # print actual mincut and karger's found cut
     print(len(nx.minimum_edge_cut(graph_union)))
