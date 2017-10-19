@@ -75,11 +75,11 @@ if __name__ == "__main__":
         # check if 100 repetitions = error of 1/e
     """
     #graph_union = nx.karate_club_graph()
-    graph_union = generate_KX(10,3)
-    #graph_union = generate_connected_K(10)
+    #graph_union = generate_KX(10,3)
+    graph_union = generate_connected_K(10)
 
     print(len(nx.minimum_edge_cut(graph_union)))
-    print(checkBound(graph_union))
+    #print(checkBound(graph_union))
 
     nx.draw(graph_union)
     plt.show()
