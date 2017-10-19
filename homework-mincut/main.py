@@ -40,33 +40,42 @@ def generate_connected_K(nb):
     return graph
 
 
-def generate_K100(nb):
+def generate_KX(X,nb):
     """
-        Generates 'nb' K_100 subgraphs and puts an edge between those subgraphs.
+        Generates 'nb' K_X subgraphs and puts an edge between those subgraphs.
     """
 
+    NODES = X
     graph = nx.Graph()
-    graph = nx.disjoint_union(graph,nx.complete_graph(100))
+    graph = nx.disjoint_union(graph,nx.complete_graph(NODES))
     for i in range(0,nb):
-        graph = nx.disjoint_union(graph,nx.complete_graph(100))
-        graph.add_edge(i*100, (i+1)*100)
-    graph.add_edge(0, nb*100)
+        graph = nx.disjoint_union(graph,nx.complete_graph(NODES))
+        graph.add_edge(i*NODES, (i+1)*NODES)
+    graph.add_edge(0, nb*NODES)
     return graph
+
+def checkBound(graph):
+    """
+        Return minimal cut of n^2/n repetitions of karger
+    """
+    minimal_cut = graph.number_of_edges() +1
+    graph_size = graph.number_of_nodes()
+    for i in range((graph_size*graph_size)//2):
+        cut = karger(graph)
+        if cut < minimal_cut:
+            minimal_cut = cut
+        #print(cut)
+    return minimal_cut
 
 if __name__ == "__main__":
     """
         Graph ideas:
         - Hypercube graph
         - Zachary's Karate Club
-        - Davis Southern Women
     """
-    graph = nx.karate_club_graph()
+    #graph_union = nx.karate_club_graph()
+    graph_union = generate_KX(10,3)
+    #graph_union = generate_connected_K(10)
 
-    #graph_union = generate_K100(4)
-    graph_union = generate_connected_K(10)
-    nx.draw(graph_union)
-    plt.show()
-
-    # print actual mincut and karger's found cut
     print(len(nx.minimum_edge_cut(graph_union)))
-    print(karger(graph_union))
+    print(checkBound(graph_union))
