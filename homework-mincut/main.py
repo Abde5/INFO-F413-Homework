@@ -64,14 +64,15 @@ def checkBound(graph):
         cut = karger(graph)
         if cut < minimal_cut:
             minimal_cut = cut
-        #print(cut)
+
     return minimal_cut
 
 if __name__ == "__main__":
     """
         Graph ideas:
-        - Hypercube graph
         - Zachary's Karate Club
+
+        # check if 100 repetitions = error of 1/e
     """
     #graph_union = nx.karate_club_graph()
     graph_union = generate_KX(10,3)
@@ -79,3 +80,17 @@ if __name__ == "__main__":
 
     print(len(nx.minimum_edge_cut(graph_union)))
     print(checkBound(graph_union))
+
+    nx.draw(graph_union)
+    plt.show()
+
+    results = {}
+    mincut = 0
+    for i in range(100):
+        mincut = checkBound(graph_union)
+        if mincut in results:
+            results[mincut] += 1
+        else:
+            results[mincut] = 1
+        print(mincut)
+    print(results)
