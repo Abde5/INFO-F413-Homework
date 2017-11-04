@@ -41,11 +41,25 @@ def column_player_equilibrium(payrollMatrix):
         - returns (mixedStrategies,expectedPayroll)
     """
     Z = pulp.LpVariable('Objective')
-    problem = pulp.LpProblem("Nash Equilibrium (p)", pulp.LpMaximize)
+    problem = pulp.LpProblem("Nash Equilibrium (q)", pulp.LpMinimize)
     problem.setObjective(Z)
 
-    # vector p (column player)
-    p = ()
+    # vector of mixed strategies
+    p = tuple([[pulp.LpVariable("q"+str(i+1),lowBound=0),1] for i in range(len(payrollMatrix))])
+
+    # sum of mixed strategies == 1
+    problem += pulp.LpAffineExpression(p) == 1
+
+    for line in payrollMatrix:
+        for j in range(len(line)):
+            p[j][1] = line[j]
+        problem += Z >= pulp.LpAffineExpression(p)
+
+    print(problem)
+    sol = pulp.solvers.GLPK()
+    sol.actualSolve(problem)
+
+    print(str(Z)+" = "+str(Z.varValue))
 
 
 def nash_equilibrium(payrollMatrix):
@@ -57,6 +71,7 @@ def nash_equilibrium(payrollMatrix):
     """
 
     row_player_equilibrium(payrollMatrix)
+    column_player_equilibrium(payrollMatrix)
 
 
 
