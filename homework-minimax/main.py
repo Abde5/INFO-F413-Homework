@@ -1,6 +1,5 @@
 import pulp
 import numpy as np
-from enum import Enum
 from GameTree import GameTree
 
 def row_player_equilibrium(payrollMatrix):
@@ -80,4 +79,5 @@ def nash_equilibrium(payrollMatrix):
     return (p_strats,q_strats,p_sol)
 
 if __name__ == "__main__":
-    nash_equilibrium([[3,-1],[-2,1]])
+    #nash_equilibrium([[3,-1],[-2,1]])
+    x = GameTree()

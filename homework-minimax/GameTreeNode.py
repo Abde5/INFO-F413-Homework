@@ -1,25 +1,37 @@
+"""
+    Node class the Game Tree class is composed by.
+"""
+from enum import Enum
+
 class NodeType(Enum):
     NOR = 1
     AND = 2
     OR = 3
 
-class Node:
+class GameTreeNode:
     """
         Represents a node in the GameTree.
     """
-    def __init__(self,nodeType):
+    def __init__(self):
         """
           Children can either be a node or a number.
         """
         self.leftChild = None
         self.rightChild = None
-        self.type = nodeType
+        self.direction = None
+        self.type = None
 
     def set_right(self,node):
         self.rightChild = node
 
     def set_left(self,node):
         self.leftChild = node
+
+    def set_direction(self,direction):
+        self.direction = direction
+
+    def set_type(self,_type):
+        self.type = _type
 
     def evaluate(self):
         """
@@ -28,9 +40,9 @@ class Node:
         """
         if self.type == NodeType.AND:
             return self._and()
-        else if self.type == NodeType.OR:
+        elif self.type == NodeType.OR:
             return self._or()
-        else if self.type == NodeType.NOR:
+        elif self.type == NodeType.NOR:
             return self._nor()
 
     def _and(self):
@@ -40,26 +52,30 @@ class Node:
         score = 0
         res = True
 
-        if type(self.leftChild) == bool:
+        children = [self.rightChild,self.leftChild]
+        if self.direction:
+            children = [self.leftChild,self.rightChild]
+
+        if type(children[0]) == bool:
             score += 1
-            if not self.leftChild:
+            if not children[0]:
                 res = False
         else:
-            res = self.leftChild.evaluate()
-            if not res[0]:
+            ret = children[0].evaluate()
+            if not ret[0]:
                 res = False
-            score += res[1]
+            score += ret[1]
 
         if res:
-            if type(self.rightChild) == bool:
+            if type(children[1]) == bool:
                 score += 1
-                if not self.rightChild:
+                if not children[1]:
                     res = False
             else:
-                res = self.rightChild.evaluate()
-                if not res[0]:
+                ret = children[1].evaluate()
+                if not ret[0]:
                     res = False
-                score += res[1]
+                score += ret[1]
 
         return (res,score)
 
@@ -70,32 +86,73 @@ class Node:
         score = 0
         res = False
 
-        if type(self.leftChild) == bool:
+        children = [self.rightChild,self.leftChild]
+        if self.direction:
+            children = [self.leftChild,self.rightChild]
+
+        if type(children[0]) == bool:
             score += 1
-            if self.leftChild:
+            if children[0]:
                 res = True
         else:
-            res = self.leftChild.evaluate()
-            if res[0]:
+            ret = children[0].evaluate()
+            if ret[0]:
                 res = True
-            score += res[1]
+            score += ret[1]
 
         if not res:
-            if type(self.rightChild) == bool:
+            if type(children[1]) == bool:
                 score += 1
-                if self.rightChild:
+                if children[1]:
                     res = True
             else:
-                res = self.leftChild.evaluate()
-                if res[0]:
+                ret = children[1].evaluate()
+                if ret[0]:
                     res = True
-                score += res[1]
+                score += ret[1]
 
         return (res,score)
 
     def _nor(self):
         """
-            OR evaluation between 2 children
+            NOR evaluation between 2 children
         """
         score = 0
-        flag = False
+        res = True
+
+        children = [self.rightChild,self.leftChild]
+        if self.direction:
+            children = [self.leftChild,self.rightChild]
+
+        if type(children[0]) == bool:
+            score += 1
+            if children[0]:
+                res = False
+        else:
+            ret = children[0].evaluate()
+            if ret[0]:
+                res = True
+            score += ret[1]
+
+        if res:
+            if type(children[1]) == bool:
+                score += 1
+                if children[1]:
+                    res = False
+            else:
+                ret = children[1].evaluate()
+                if ret[0]:
+                    res = True
+                score += ret[1]
+
+        return (res,score)
+
+    def __str__(self):
+        res = ""
+        if self.type == NodeType.AND:
+            res += "Node AND"
+        if self.type == NodeType.OR:
+            res += "Node OR"
+        if self.type == NodeType.NOR:
+            res += "Node NOR"
+        return res
