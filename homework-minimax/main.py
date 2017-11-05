@@ -80,8 +80,7 @@ def nash_equilibrium(payrollMatrix):
 
 if __name__ == "__main__":
 
-
-    x = GameTree(height=2,_type=False)
+    x = GameTree(height=3,_type=True)
     payoff = x.generate_payoff_matrix()
     equilibrium = nash_equilibrium(payoff)
 
