@@ -131,7 +131,7 @@ class GameTreeNode:
         else:
             ret = children[0].evaluate()
             if ret[0]:
-                res = True
+                res = False
             score += ret[1]
 
         if res:
@@ -141,10 +141,12 @@ class GameTreeNode:
                     res = False
             else:
                 ret = children[1].evaluate()
+                print(ret)
                 if ret[0]:
-                    res = True
+                    res = False
                 score += ret[1]
 
+        print(res,score)
         return (res,score)
 
     def __str__(self):

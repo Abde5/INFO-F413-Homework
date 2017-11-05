@@ -54,6 +54,26 @@ class GameTree:
                 self.nodes[lastNode].set_type(node_type)
                 lastNode += 1
 
+    def hardcode(self):
+        """
+            Let's hardcode something
+        """
+
+        self.nodes[0].set_direction(True)
+        self.nodes[1].set_direction(True)
+        self.nodes[2].set_direction(True)
+
+        self.nodes[1].set_left(False)
+        self.nodes[1].set_right(True)
+        self.nodes[2].set_left(True)
+        self.nodes[2].set_right(True)
+
+        print(self.nodes[0])
+        print(self.nodes[1])
+        print(self.nodes[2])
+
+        return self.nodes[0].evaluate()
+
     def generate_payoff_matrix(self):
         """
             Method that will generate a payoff matrix for this Game Tree by
@@ -70,13 +90,20 @@ class GameTree:
 
             # with this algorithm, generate the cost for every input
             for j in range(len(inputs)):
-
                 for k in range(len(inputs[j])):
                     if k%2:
-                        self.nodes[-k//2].set_right(inputs[j][k])
+                        self.nodes[len(self.nodes)//2+k//2].set_right(inputs[j][k])
                     else:
-                        self.nodes[-k//2].set_left(inputs[j][k])
-
+                        self.nodes[len(self.nodes)//2+k//2].set_left(inputs[j][k])
                 payoff_matrix[i][j] = self.nodes[0].evaluate()[1]
+                #print("algorithm:",algorithms[i])
+                #print("input",inputs[j])
+                #print("score",payoff_matrix[i][j])
+                #print()
 
         return payoff_matrix
+
+
+#x = GameTree(height=2,_type=True)
+#print(x.generate_payoff_matrix())
+#print(x.hardcode())

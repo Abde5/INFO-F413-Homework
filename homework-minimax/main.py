@@ -17,7 +17,7 @@ def row_player_equilibrium(payrollMatrix):
     problem.setObjective(Z)
 
     # vector of mixed strategies
-    p = tuple([[pulp.LpVariable("p"+str(i+1),lowBound=0),1] for i in range(len(payrollMatrix))])
+    p = tuple([[pulp.LpVariable("p"+str(i+1),lowBound=0),1] for i in range(len(payrollMatrix[0]))])
 
     # sum of mixed strategies == 1
     problem += pulp.LpAffineExpression(p) == 1
@@ -28,7 +28,7 @@ def row_player_equilibrium(payrollMatrix):
             p[j][1] = line[j]
         problem += Z <= pulp.LpAffineExpression(p)
 
-    print(problem)
+    #print(problem)
     sol = pulp.solvers.GLPK()
     sol.actualSolve(problem)
 
@@ -46,7 +46,7 @@ def column_player_equilibrium(payrollMatrix):
     problem.setObjective(Z)
 
     # vector of mixed strategies
-    q = tuple([[pulp.LpVariable("q"+str(i+1),lowBound=0),1] for i in range(len(payrollMatrix))])
+    q = tuple([[pulp.LpVariable("q"+str(i+1),lowBound=0),1] for i in range(len(payrollMatrix[0]))])
 
     # sum of mixed strategies == 1
     problem += pulp.LpAffineExpression(q) == 1
@@ -56,7 +56,7 @@ def column_player_equilibrium(payrollMatrix):
             q[j][1] = line[j]
         problem += Z >= pulp.LpAffineExpression(q)
 
-    print(problem)
+    #print(problem)
     sol = pulp.solvers.GLPK()
     sol.actualSolve(problem)
 
@@ -79,5 +79,12 @@ def nash_equilibrium(payrollMatrix):
     return (p_strats,q_strats,p_sol)
 
 if __name__ == "__main__":
-    #nash_equilibrium([[3,-1],[-2,1]])
-    x = GameTree()
+
+
+    x = GameTree(height=2,_type=False)
+    payoff = x.generate_payoff_matrix()
+    equilibrium = nash_equilibrium(payoff)
+
+    print("Strategies p (inputs):", equilibrium[0])
+    print("Strategies q (algorithms):", equilibrium[1])
+    print("Score:", equilibrium[2])
