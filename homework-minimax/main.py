@@ -84,6 +84,20 @@ if __name__ == "__main__":
     payoff = x.generate_payoff_matrix()
     equilibrium = nash_equilibrium(payoff)
 
-    print("Strategies p (inputs):", equilibrium[0])
-    print("Strategies q (algorithms):", equilibrium[1])
+    print("Strategies p:", equilibrium[0])
+    print("Strategies q:", equilibrium[1])
     print("Score:", equilibrium[2])
+
+    vector_p = [i for i in zip(x.get_algorithms(),equilibrium[0]) if i[1] > 0]
+    print()
+    print("ALGORITHM STRATEGIES")
+    print()
+    for i in vector_p:
+        print(i)
+
+    vector_q = [i for i in zip(x.get_inputs(),equilibrium[1]) if i[1] > 0]
+    print()
+    print("INPUT STRATEGIES")
+    print()
+    for i in vector_q:
+        print(i)

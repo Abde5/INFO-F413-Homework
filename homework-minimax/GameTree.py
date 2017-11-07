@@ -21,6 +21,14 @@ class GameTree:
         self.height = height
         self.nodes = []
         self._generate_tree()
+        self.algorithms = []
+        self.inputs = []
+
+    def get_algorithms(self):
+        return self.algorithms
+
+    def get_inputs(self):
+        return self.inputs
 
     def evaluate():
         return self.nodes[0].evaluate()
@@ -77,33 +85,25 @@ class GameTree:
     def generate_payoff_matrix(self):
         """
             Method that will generate a payoff matrix for this Game Tree by
-            generating every possible algorithm to evaluate it.
+            generating every possible algorithm to evaluate it with every possible
+            input from the player.
         """
-        algorithms = [i for i in itertools.product((False,True), repeat=len(self.nodes))]
-        inputs = [i for i in itertools.product((False,True), repeat=len(self.nodes)+1)]
-        payoff_matrix = [[0 for j in range(len(inputs))] for i in range(len(algorithms))]
+        self.algorithms = [i for i in itertools.product((False,True), repeat=len(self.nodes))]
+        self.inputs = [i for i in itertools.product((False,True), repeat=len(self.nodes)+1)]
+        payoff_matrix = [[0 for j in range(len(self.inputs))] for i in range(len(self.algorithms))]
 
         dico = {}
-        for i in range(len(algorithms)):
-            for j in range(len(algorithms[i])):
-                self.nodes[j].set_direction(algorithms[i][j])
+        for i in range(len(self.algorithms)):
+            for j in range(len(self.algorithms[i])):
+                self.nodes[j].set_direction(self.algorithms[i][j])
 
             # with this algorithm, generate the cost for every input
-            for j in range(len(inputs)):
-                for k in range(len(inputs[j])):
+            for j in range(len(self.inputs)):
+                for k in range(len(self.inputs[j])):
                     if k%2:
-                        self.nodes[len(self.nodes)//2+k//2].set_right(inputs[j][k])
+                        self.nodes[len(self.nodes)//2+k//2].set_right(self.inputs[j][k])
                     else:
-                        self.nodes[len(self.nodes)//2+k//2].set_left(inputs[j][k])
-                payoff_matrix[i][j] = self.nodes[0].evaluate()[1]
-                #print("algorithm:",algorithms[i])
-                #print("input",inputs[j])
-                #print("score",payoff_matrix[i][j])
-                #print()
+                        self.nodes[len(self.nodes)//2+k//2].set_left(self.inputs[j][k])
+                payoff_matrix[i][j] = -self.nodes[0].evaluate()[1]
 
         return payoff_matrix
-
-
-#x = GameTree(height=2,_type=True)
-#print(x.generate_payoff_matrix())
-#print(x.hardcode())
