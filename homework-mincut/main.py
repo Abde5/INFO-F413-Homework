@@ -61,28 +61,17 @@ def checkBound(graph):
     """
         Return minimal cut of n^2/n repetitions of karger
     """
-    results = {}
+
     minimal_cut = graph.number_of_edges() + 1
     graph_size = graph.number_of_nodes()
     for i in range((graph_size * graph_size) // 2):
         cut = karger(graph)
         if cut < minimal_cut:
             minimal_cut = cut
-        if cut in results:
-            results[cut] += 1
-        else:
-            results[cut] = 1
-    print(results)
     return minimal_cut
 
 
 if __name__ == "__main__":
-    """
-        Graph ideas:
-        - Zachary's Karate Club
-
-        # check if 100 repetitions = error of 1/e
-    """
 
     # uncomment graph to test
     #graph = nx.karate_club_graph()
@@ -91,7 +80,6 @@ if __name__ == "__main__":
 
     # uncomment to see the minimum cut
     # print(len(nx.minimum_edge_cut(graph_union)))
-
 
     results = {}
     mincut = 0
