@@ -46,6 +46,7 @@ class Treap:
         if node.getBkey() != elem:
             return
 
+        # moves node down til' it's a leaf
         while node.getLeft() != None or node.getRight() != None:
             left = -1 if node.getLeft() == None else node.getLeft().getHkey()
             right = -1 if node.getRight() == None else node.getRight().getHkey()
@@ -55,6 +56,7 @@ class Treap:
             else:
                 self.leftRotation(node.getRight())
 
+        # deletes node
         if node.isRightChild():
             node.getParent().setRight(None)
         else:

@@ -6,6 +6,7 @@
 \usepackage{hyperref}
 \usepackage{graphicx}
 \usepackage{pgf}
+\usepackage{amsfonts}
 
 \definecolor{grey}{rgb}{0.9,0.9,0.9}
 
@@ -29,108 +30,120 @@ breaklines=true
 \sloppy
 \maketitle
 
-We have studied that the random treaps
-
-corresponds to:\\
-
-\scalebox{0.7}{\input{results.pgf}}
+Treaps are interesting data structures that act as trees and heaps at the same time
+with its 2 keys per node. A randomized implementation of these structures are very appealing
+in the focus of this course. In this document an analysis is done, showing that some properties
+about tree balance are true and it helps to prove that in expectance, a random treap
+is a well-balanced binary search tree.
 
 \section{Treaps vs Quicksort}
 
-We'll begin with the trees so that $k=1$. In both cases (NOR-NOR and AND-OR) the
-result is the same. The positive elements of the algorithm strategies vector are:
- \begin{enumerate}
-   \item p(1).- $(\mathbb{Right},\mathbb{Right},\mathbb{Right}) \to 0.5$
-   \item p(2).- $(\mathbb{Left},\mathbb{Left},\mathbb{Left}) \to 0.5$
- \end{enumerate}
+The \textit{memoryless} property of a tree shows us that, as a priority for a node is chosen
+independently for every node, we would know the structure of the tree if we knew those
+random values before inserting them.
 
-And the positive elements of the input strategies vector:
-\begin{enumerate}
-  \item q(1).- $(0,1,0,1) \to 0.5$
-  \item q(2).- $(1,0,1,0) \to 0.5$
-\end{enumerate}
+This property makes us able to make a parallelism with the behaviour of quicksort with 2
+important characteristics of random treaps, the priority and its binary search similarity.
+The priority of a node will position the node
+up on the tree if it's higher, or down if it's lower.
 
-In this case the opponent (input player) has to give the minimum chances of winning
-to the algorithm player, so that's why, with the algorithms given by the algorithm player,
-and the average complexity time of $3$ (being the minimum $2$ and the maximum $4$) so we can
-say that it's in perfect equilibrium.
+If we take a treap, we'll see that every element in the node has been compared to the root ($x$) once,
+and the root is the element with the highest priority. Then, the $x$ node has a sub-tree as his
+left child and another one as his right child. We can see then that the elements of the left sub-tree
+have been compared with the root of that sub-tree, but never been compared with the trees in the other
+subtree. If we iterate like this, the root of every sub-tree in the treap, or the node at the $i$th level, can be seen as the \textit{pivot} chosen in the $i$th iteration of the quicksort algorithm. The
+higher the random value of the priority is, the sooner it'd be appear in quicksort as a pivot. And the
+comparaisons are the same in both cases because of the binary search properties of the random treap. \\
 
-$$E[\mathbb{complexity}] = \frac{1}{4}q(1)p(1) + \frac{1}{4}q(1)p(2) + \frac{1}{4}q(2)p(1) + \frac{1}{4}q(2)p(2)$$
-$$E[\mathbb{complexity}] = \frac{2}{4} + \frac{4}{4} + \frac{2}{4} + \frac{4}{4}$$
-$$E[\mathbb{complexity}] = 3$$
+We can also say that if we want to sort a sequence, we can insert every element in an empty tree, and then read the tree in a prefix order, this operation will take have a complexity of $O(n\log n)$, the same as quicksort.
 
-With every other input, the complexity would have been different.
+\section{Implementation}
 
-Then we can continue with the tests in bigger trees, for example in the NOR-NOR tree
-of height 2 the algorithms vector is:
+This project has been implemented in Python, with 2 main classes: \verb|Treap| and \verb|TreapNode|, that represent respectively the treap and a node of the treap. \\
 
-\begin{enumerate}
-  \item p(1).- $(\mathbb{Right},\mathbb{Right},\mathbb{Right},\mathbb{Right},\mathbb{Right},\mathbb{Right},\mathbb{Left}) \to 0.125$
-  \item p(2).- $(\mathbb{Right},\mathbb{Right},\mathbb{Right},\mathbb{Left},\mathbb{Left},\mathbb{Right},\mathbb{Right}) \to 0.125$
-  \item p(3).- $(\mathbb{Right},\mathbb{Right},\mathbb{Left},\mathbb{Right},\mathbb{Left},\mathbb{Left},\mathbb{Left}) \to 0.125$
-  \item p(4).- $(\mathbb{Right},\mathbb{Right},\mathbb{Left},\mathbb{Left},\mathbb{Right},\mathbb{Right},\mathbb{Right}) \to 0.125$
-  \item p(5).- $(\mathbb{Right},\mathbb{Left},\mathbb{Right},\mathbb{Left},\mathbb{Right},\mathbb{Left},\mathbb{Right}) \to 0.125$
-  \item p(6).- $(\mathbb{Right},\mathbb{Left},\mathbb{Left},\mathbb{Right},\mathbb{Left},\mathbb{Right},\mathbb{Left}) \to 0.125$
-  \item p(7).- $(\mathbb{Right},\mathbb{Left},\mathbb{Left},\mathbb{Right},\mathbb{Left},\mathbb{Left},\mathbb{Left}) \to 0.125$
-  \item p(8).- $(\mathbb{Left},\mathbb{Left},\mathbb{Right},\mathbb{Left},\mathbb{Right},\mathbb{Right},\mathbb{Left}) \to 0.125$
-\end{enumerate}
+The \verb|TreapNode| doesn't have a lot of interesting things to talk about, as it has only getters and setters to its attributes (left child, right child, parent, key and priority).
+In the other hand, the \verb|Treap| class includes every implementation of every algorithm
+useful to implement the random treap. Left and Right rotation routines have been implemented, as the find method too (just a BST search), but there's nothing special about them, nevertheless we'll check out more closely the \verb|insert| and \verb|delete| code.
 
-And the input vector:
+The \verb|insert| method has been implemented in 2 parts. A treap has to add the node as it was just
+a simple binary search tree, and then has to apply some rotations so that it satisfies also the heap
+property.
 
-\begin{enumerate}
-  \item q(1).- $(0,0,0,1,0,0,0,1) \to 0.25$
-  \item q(2).- $(0,0,1,0,0,0,1,0) \to 0.25$
-  \item q(3).- $(0,1,0,0,1,0,0,0) \to 0.25$
-  \item q(4).- $(1,0,0,0,0,1,0,0) \to 0.25$
-\end{enumerate}
+\begin{lstlisting}
+  # BST step
+  attach = self.find(elem, False)
 
-In this case we find a very familiar looking input strategies vector. In fact, these inputs
-represent every possible permutation capable to convert a 3 level NOR-NOR tree to a 2 level
-NOR-NOR tree with the same input as seen in the case before. For example, let's take
-q(1) from our 3 level NOR-NOR tree: \\
+  # node creation with random priority
+  node = TreapNode(elem, random.random())
 
+  # in case it's an empty tree
+  if attach == None:
+      self.root = node
+      return
 
-If we evaluate the last level of NOR nodes we can find then: \\
+  node.setParent(attach)
+  if elem <= attach.getBkey():
+      attach.setLeft(node)
+  else:
+      attach.setRight(node)
 
-Which is q(2) in the input strategies for the 2 level tree of the same kind! And with
-the same calculus as before, we find an expected complexity of $6$, from a minimum
-of $4$ and maximum of $8$.
+  # Heap step
+  while node.getParent() != None and node.getHkey() > node.getParent().getHkey():
+      if node.isRightChild():
+          self.leftRotation(node)
+      else:
+          self.rightRotation(node)
+\end{lstlisting}
 
-Let's see what happens now when we have an AND-OR:
+The \verb|delete| method cannot be the same as the BSL, as it could break some priorities
+if not done well. So, for the chosen node, we will have to move it down the tree by rotations until
+it's a leaf, so we can delete it without problems. If we don't want to break the priorities, we'll do a
+rotation with the child who has the more priority (for example, if priority of left child $= 0.5$ and right child $=0.4$, we'll chose the left child, so he'll be on top of the current right child and it won't break the priorities).
 
-\begin{enumerate}
-  \item p(1).- $(\mathbb{Right},\mathbb{Right},\mathbb{Right},\mathbb{Right},\mathbb{Right},\mathbb{Right},\mathbb{Left}) \to 0.0961538$
-  \item p(2).- $(\mathbb{Right},\mathbb{Right},\mathbb{Right},\mathbb{Left},\mathbb{Left},\mathbb{Left},\mathbb{Right}) \to 0.134615$
-  \item p(3).- $(\mathbb{Right},\mathbb{Right},\mathbb{Left},\mathbb{Right},\mathbb{Left},\mathbb{Right},\mathbb{Left}) \to 0.115385$
-  \item p(4).- $(\mathbb{Right},\mathbb{Left},\mathbb{Right},\mathbb{Left},\mathbb{Right},\mathbb{Right},\mathbb{Left}) \to 0.115385$
-  \item p(5).- $(\mathbb{Right},\mathbb{Left},\mathbb{Right},\mathbb{Left},\mathbb{Left},\mathbb{Right},\mathbb{Right}) \to 0.0769231$
-  \item p(6).- $(\mathbb{Right},\mathbb{Left},\mathbb{Left},\mathbb{Right},\mathbb{Left},\mathbb{Right},\mathbb{Right}) \to 0.0961538$
-  \item p(7).- $(\mathbb{Right},\mathbb{Left},\mathbb{Left},\mathbb{Right},\mathbb{Right},\mathbb{Left},\mathbb{Left}) \to 0.153846$
-  \item p(8).- $(\mathbb{Right},\mathbb{Left},\mathbb{Left},\mathbb{Left},\mathbb{Right},\mathbb{Left},\mathbb{Right}) \to 0.0576923$
-  \item p(9).- $(\mathbb{Left},\mathbb{RIght},\mathbb{Right},\mathbb{Left},\mathbb{Right},\mathbb{Right},\mathbb{Right}) \to 0.0384615$
-  \item p(10).- $(\mathbb{Left},\mathbb{Right},\mathbb{Right},\mathbb{Left},\mathbb{Right},\mathbb{Left},\mathbb{Left}) \to 0.0384615$
-  \item p(11).- $(\mathbb{Left},\mathbb{Right},\mathbb{Left},\mathbb{Right},\mathbb{Right},\mathbb{Left},\mathbb{Left}) \to 0.0384615$
-  \item p(12).- $(\mathbb{Left},\mathbb{Right},\mathbb{Left},\mathbb{Left},\mathbb{Right},\mathbb{Right},\mathbb{Left}) \to 0.0384615$
-\end{enumerate}
+\begin{lstlisting}
+  node = self.find(elem)
 
-\begin{enumerate}
-  \item q(1).- $(1,1,1,0,0,1,1,1) \to 0.25$
-  \item q(2).- $(1,1,0,1,1,0,1,1) \to 0.25$
-  \item q(3).- $(1,0,1,1,1,1,0,1) \to 0.25$
-  \item q(4).- $(0,1,1,1,1,1,1,0) \to 0.25$
-\end{enumerate}
+  if node.getBkey() != elem:
+      return
 
-Curiously, we see that this time the input strategies follow a different pattern
-if we reduce it to a 2-level tree (1,0,0,1 instead of 1,0,1,0). This can be justified because
-of the more strange probability distribution for the algorithms strategies. In any case,
-following the same method for the other tree, the expected complexity with these vectors
-is also $6$.
+  # moves node down til' it's a leaf
+  while node.getLeft() != None or node.getRight() != None:
+      left = -1 if node.getLeft() == None else node.getLeft().getHkey()
+      right = -1 if node.getRight() == None else node.getRight().getHkey()
+
+      if left > right:
+          self.rightRotation(node.getLeft())
+      else:
+          self.leftRotation(node.getRight())
+
+  # deletes node
+  if node.isRightChild():
+      node.getParent().setRight(None)
+  else:
+      node.getParent().setLeft(None)
+\end{lstlisting}
+\section{Results}
+
+Lemma 8.6 states: Let $T$ be a random treap for a set $S$ of size $n$. For an element $x \in S$ having rank $k$,
+
+$$ E[\textrm{depth}(x)] = H_k + H_{n-k+1} -1 $$
+
+Being $H_n$ the $n$-th harmonic number. \\
+
+For the tests I've taken every integer in the range $[1,100]$ (inclusive), so we can know
+that the element $x$ is has the rank $x$ in the set. Then, I've created $100000$ different
+treaps, each one inserting the elements of the set in a random order (after a shuffle for example).
+
+In expectance, the results clearly prove that the property stated in the lemma is true, as it's seen in the graph with the results:
+
+\scalebox{0.7}{\input{results.pgf}}
+
+The average error is $0.05$, which is pretty little and can shows us the acceptance of the lemma 8.6.
 
 \section{Conclusion}
 
-We can conclude that the results in a simple game evaluation tree can be propagated
-in a very larger tree because an optimal game is a game where in every turn the players
-choose the same strategy, and as the rules of the game don't change while playing, we can
-consider that the set of best strategies is, in average, the same.
+In conclusion, the treaps solve with an elegant twist some drawbacks of traditional tree-based
+data structures with the power of randomness, and in this document it has been proved that in expectance, random treaps will not have the problem of the worst-case scenario that have simple
+BSTs, with the operations having \textbf{the same complexity} ($O(\log n)$).
 
 \end{document}
