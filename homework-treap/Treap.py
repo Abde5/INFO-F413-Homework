@@ -1,6 +1,7 @@
 from TreapNode import TreapNode
 import random
 
+
 class Treap:
     """
         Class that implements the random treap
@@ -9,12 +10,15 @@ class Treap:
     def __init__(self):
         self.root = None
 
-    def insert(self,elem):
+    def insert(self, elem):
+        """
+            Performs the insert operation with elem as the BST key and a random heap key.
+        """
 
         # BST step
-        attach = self.find(elem,False)
+        attach = self.find(elem, False)
 
-        node = TreapNode(elem,random.random())
+        node = TreapNode(elem, random.random())
 
         if attach == None:
             self.root = node
@@ -33,7 +37,7 @@ class Treap:
             else:
                 self.rightRotation(node)
 
-    def delete(self,elem):
+    def delete(self, elem):
         """
             Performs de deletion by moving the node to a leaf and deleting it.
         """
@@ -56,7 +60,7 @@ class Treap:
         else:
             node.getParent().setLeft(None)
 
-    def find(self,elem,finding=True):
+    def find(self, elem, finding=True):
         """
             Returns node such that "elem" value == node. Or the node where it stops.
         """
@@ -67,17 +71,16 @@ class Treap:
         while current != None:
             previous = current
             if finding:
-                if elem == current.getBkey() :
+                if elem == current.getBkey():
                     break
-            if elem <= current.getBkey() :
+            if elem <= current.getBkey():
                 current = current.getLeft()
             else:
                 current = current.getRight()
 
         return current if current != None else previous
 
-
-    def rightRotation(self,node):
+    def rightRotation(self, node):
         """
             Performs a right rotation, supposes that node is a leftChild.
         """
@@ -103,8 +106,7 @@ class Treap:
             else:
                 node.getParent().setLeft(node)
 
-
-    def leftRotation(self,node):
+    def leftRotation(self, node):
         """
             Performs a left rotation, supposes that node is a rightChild.
         """
@@ -130,14 +132,14 @@ class Treap:
             else:
                 node.getParent().setLeft(node)
 
-    def getDepth(self,node):
+    def getDepth(self, node):
         """
             Returns the depth of a node (distance from the root).
         """
 
-        depth = 0
+        depth = 1
         while node != self.root:
-            depth +=1
+            depth += 1
             node = node.getParent()
         return depth
 
