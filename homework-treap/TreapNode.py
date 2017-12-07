@@ -54,5 +54,5 @@ class TreapNode:
         if self.getRight():
             right = str(self.getRight())
 
-        #return "("+left+" "+str(self.bkey)+","+str(self.hkey)+" "+right+")"
-        return "("+left+" "+str(self.bkey)+" "+right+")"
+        return "("+left+" "+str(self.bkey)+","+str(self.hkey)+" "+right+")"
+        #return "("+left+" "+str(self.bkey)+" "+right+")"

@@ -21,13 +21,17 @@ class Treap:
             return
 
         node.setParent(attach)
-        if elem <= attach.getBkey() :
+        if elem <= attach.getBkey():
             attach.setLeft(node)
         else:
             attach.setRight(node)
 
         # Heap step
-
+        while node.getParent() != None and node.getHkey() > node.getParent().getHkey():
+            if node.isRightChild():
+                self.leftRotation(node)
+            else:
+                self.rightRotation(node)
 
     def delete(self,elem):
         pass
@@ -57,13 +61,20 @@ class Treap:
         """
             Performs a right rotation, supposes that node is a leftChild.
         """
-
         parent = node.getParent()
+
+        if parent == self.root:
+            self.root = node
+
         right = node.getRight()
 
         node.setParent(parent.getParent())
+
         parent.setParent(node)
-        right.setParent(parent)
+        if right:
+            right.setParent(parent)
+        node.setRight(parent)
+
         parent.setLeft(right)
 
         if node.getParent():
@@ -77,16 +88,20 @@ class Treap:
         """
             Performs a left rotation, supposes that node is a rightChild.
         """
-
         parent = node.getParent()
+
+        if parent == self.root:
+            self.root = node
+
         left = node.getLeft()
 
         node.setParent(parent.getParent())
 
         parent.setParent(node)
+        if left:
+            left.setParent(parent)
         node.setLeft(parent)
 
-        left.setParent(parent)
         parent.setRight(left)
 
         if node.getParent():
