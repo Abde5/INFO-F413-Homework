@@ -34,7 +34,27 @@ class Treap:
                 self.rightRotation(node)
 
     def delete(self,elem):
-        pass
+        """
+            Performs de deletion by moving the node to a leaf and deleting it.
+        """
+        node = self.find(elem)
+
+        if node.getBkey() != elem:
+            return
+
+        while node.getLeft() != None or node.getRight() != None:
+            left = -1 if node.getLeft() == None else node.getLeft().getHkey()
+            right = -1 if node.getRight() == None else node.getRight().getHkey()
+
+            if left > right:
+                self.rightRotation(node.getLeft())
+            else:
+                self.leftRotation(node.getRight())
+
+        if node.isRightChild():
+            node.getParent().setRight(None)
+        else:
+            node.getParent().setLeft(None)
 
     def find(self,elem,finding=True):
         """
@@ -109,6 +129,17 @@ class Treap:
                 node.getParent().setRight(node)
             else:
                 node.getParent().setLeft(node)
+
+    def getDepth(self,node):
+        """
+            Returns the depth of a node (distance from the root).
+        """
+
+        depth = 0
+        while node != self.root:
+            depth +=1
+            node = node.getParent()
+        return depth
 
     def __str__(self):
         return str(self.root)
